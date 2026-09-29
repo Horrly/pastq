@@ -1,0 +1,18 @@
+Django==5.2.17
+djangorestframework==3.18.1
+djangorestframework-simplejwt==5.5.1
+django-cors-headers==4.9.0
+dj-database-url==3.1.2
+psycopg[binary]==3.3.6
+whitenoise==6.12.0
+gunicorn==26.2.0
+requests==2.34.2
+pillow==12.3.0
+pypdfium2==5.13.0
+django-storages[s3]==1.14.6
+
+# testing
+pytest==9.1.1
+pytest-django==4.14.0
+responses==0.26.3
+moto[s3]==5.2.3

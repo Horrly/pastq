@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: pastq
+      POSTGRES_USER: pastq
+      POSTGRES_PASSWORD: pastq
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pastq"]
+      interval: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://pastq:pastq@db:5432/pastq
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      AI_PROVIDER: ${AI_PROVIDER:-fake}
+      AI_API_KEY: ${AI_API_KEY:-}
+    volumes:
+      - media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    environment:
+      VITE_API_TARGET: http://backend:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  media:

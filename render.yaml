@@ -1,0 +1,39 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# One free web service. Postgres on Neon, page images on an S3-compatible bucket
+# (Backblaze B2's free 10 GB works), AI via Google Gemini's free tier or another provider.
+
+services:
+  - type: web
+    name: pastq
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: bash start.sh
+    healthCheckPath: /api/health/
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false # Neon connection string
+      # Storage for uploaded pages (Render's disk is wiped on every deploy)
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ENDPOINT_URL
+        sync: false # e.g. https://s3.us-west-004.backblazeb2.com
+      - key: S3_REGION
+        sync: false # e.g. us-west-004
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      # AI (optional: without it, students type questions in)
+      - key: AI_PROVIDER
+        value: openai # OpenAI-compatible API; Gemini by default
+      - key: AI_API_KEY
+        sync: false # Google AI Studio key
+      - key: AI_MODEL
+        value: gemini-2.5-flash
